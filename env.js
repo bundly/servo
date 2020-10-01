@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
     // React App Deployed URLs
     hosts = ['https://bundly.tech', 'https://dash-delta.vercel.app', 'https://dash.bundly.tech'];
     callbackUrl = 'https://bundly.tech/api';
-    DB_URL;
+    DB_URL = 'mongodb://localhost:27017/dash';
 } else {
     // React App URL
     hosts = ['http://localhost:3000'];
