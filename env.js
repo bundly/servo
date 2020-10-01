@@ -5,7 +5,7 @@ export const { MONGO_URI, API_KEY, SALT_ROUNDS } = process.env;
 
 export const API_PORT = process.env.API_PORT || 5000;
 
-export let DB_URL = MONGO_URI;
+export let DB_URL;
 export let hosts = [];
 export let callbackUrl = '';
 export const TURN_INTERVAL = 0;
