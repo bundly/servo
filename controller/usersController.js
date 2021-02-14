@@ -33,9 +33,9 @@ const usersController = {
             }
 
             response.authenticated = {
-                github: userGithub ? true : false,
-                discord: userDiscord ? true : false,
-                google: userGoogle ? true : false
+                github: Boolean(userGithub),
+                discord: Boolean(userDiscord),
+                google: Boolean(userGoogle)
             };
             return res.json(response);
         } catch {

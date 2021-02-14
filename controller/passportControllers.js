@@ -13,17 +13,10 @@ passport.use(
             clientID: process.env.GH_CLIENT_ID,
             clientSecret: process.env.GH_CLIENT_SECRET,
             callbackURL: `${callbackUrl}/auth/github/callback`,
-            scope: [
-                'repo:status',
-                'read:org',
-                'notifications',
-                'read:user',
-                'user:email',
-                'read:discussion'
-            ]
+            scope: ['repo:status', 'read:org', 'notifications', 'read:user', 'user:email', 'read:discussion']
         },
         async (accessToken, refreshToken, profile, cb) => {
-            const username = profile.username;
+            const { username } = profile;
             const duplicate = await User.findOne({ username }, { _id: 0 });
 
             if (duplicate) {
@@ -46,19 +39,20 @@ passport.use(
 
                     return cb(null, updatedUser);
                 }
+
                 return cb(null, duplicate);
             }
 
             try {
                 const user = new User({
-                    username: username,
+                    username,
                     githubProfile: profile,
                     accounts: [
                         {
                             kind: 'github',
                             uid: profile.id.toString(),
                             token: {
-                                accessToken: accessToken
+                                accessToken
                                 // No refershToken given with github
                             }
                         }
@@ -84,13 +78,14 @@ passport.use(
             scope: discordScopes,
             passReqToCallback: true
         },
+        // eslint-disable-next-line max-params
         async (req, accessToken, refreshToken, profile, cb) => {
             const { state } = req.query;
             if (!state) {
                 return cb(new Error('GitHub Login not found. Login with GitHub first'), null);
             }
 
-            const { token } = JSON.parse(Buffer.from(state, 'base64').toString()); // token -> github access token
+            const { token } = JSON.parse(Buffer.from(state, 'base64').toString()); // Token -> github access token
 
             if (typeof token !== 'string' || !token) {
                 return cb(new Error('GitHub Login not found. Login with GitHub first'), null);
@@ -107,8 +102,8 @@ passport.use(
                 return cb(new Error('Error with GitHub Login. Token expired, login again'), null);
             }
 
-            let needsUpdate = false,
-                duplicate = false;
+            let needsUpdate = false;
+            let duplicate = false;
             registeredUser.accounts.forEach(account => {
                 if (account.kind === 'discord') {
                     duplicate = true;
@@ -159,11 +154,11 @@ passport.use(
     )
 );
 
-passport.serializeUser(function (user, cb) {
+passport.serializeUser((user, cb) => {
     cb(null, user);
 });
 
-passport.deserializeUser(function (obj, cb) {
+passport.deserializeUser((obj, cb) => {
     cb(null, obj);
 });
 

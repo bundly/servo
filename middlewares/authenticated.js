@@ -9,6 +9,7 @@ export const customAuthenticator = async (req, res, next) => {
         if (!token) {
             throw new ErrorHandler(401, 'Bad Request. Login with github first');
         }
+
         const state = token ? Buffer.from(JSON.stringify({ token })).toString('base64') : undefined;
 
         const registeredUser = await User.findOne(
@@ -22,7 +23,7 @@ export const customAuthenticator = async (req, res, next) => {
             throw new ErrorHandler(500, 'Error with GitHub Login. Token expired, login again');
         }
 
-        const authenticator = passport.authenticate('discord', { kind: 'discord', state: state });
+        const authenticator = passport.authenticate('discord', { kind: 'discord', state });
 
         authenticator(req, res, next);
     } catch (err) {
